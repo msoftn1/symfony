@@ -8,14 +8,16 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Category
+ * Сущность категории.
  *
- * @ORM\Table(name="category", indexes={@ORM\Index(name="category_eId_index", columns={"eId"})})
+ * @ORM\Table(name="category", uniqueConstraints={@ORM\UniqueConstraint(name="category_eId_uindex", columns={"eId"})})
  * @ORM\Entity
  */
 class Category
 {
     /**
+     * Идентификатор.
+     *
      * @var int
      *
      * @ORM\Column(name="id", type="integer", nullable=false)
@@ -25,6 +27,8 @@ class Category
     private $id;
 
     /**
+     * Название.
+     *
      * @Assert\NotBlank
      * @Assert\Length(min=3, max=12)
      *
@@ -35,6 +39,8 @@ class Category
     private $title;
 
     /**
+     * Идентификатор в системе импорта.
+     *
      * @var int|null
      *
      * @ORM\Column(name="eId", type="integer", nullable=true)
@@ -42,25 +48,43 @@ class Category
     private $eid;
 
     /**
+     * Товары категории.
+     *
      * @ORM\ManyToMany(targetEntity="Product", mappedBy="categories")
      */
     private $products;
 
+    /**
+     * Конструктор.
+     */
     public function __construct()
     {
         $this->products = new ArrayCollection();
     }
 
+    /**
+     * Получить идентификатор.
+     *
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * Получить название.
+     *
+     * @return string|null
+     */
     public function getTitle(): ?string
     {
         return $this->title;
     }
 
+    /**
+     * Установить название.
+     */
     public function setTitle(string $title): self
     {
         $this->title = $title;
@@ -68,11 +92,21 @@ class Category
         return $this;
     }
 
+    /**
+     * Получить идентификатор в системе импорта.
+     */
     public function getEid(): ?int
     {
         return $this->eid;
     }
 
+    /**
+     * Установить идентификатор в системе импорта.
+     *
+     * @param int|null $eid
+     *
+     * @return $this
+     */
     public function setEid(?int $eid): self
     {
         $this->eid = $eid;
@@ -81,6 +115,8 @@ class Category
     }
 
     /**
+     * Получить товары.
+     *
      * @return Collection|Product[]
      */
     public function getProducts(): Collection
@@ -88,6 +124,13 @@ class Category
         return $this->products;
     }
 
+    /**
+     * Добавить товар в категорию.
+     *
+     * @param Product $product
+     *
+     * @return $this
+     */
     public function addProduct(Product $product): self
     {
         if (!$this->products->contains($product)) {
@@ -98,6 +141,13 @@ class Category
         return $this;
     }
 
+    /**
+     * Удалить товар из категории.
+     *
+     * @param Product $product
+     *
+     * @return $this
+     */
     public function removeProduct(Product $product): self
     {
         if ($this->products->contains($product)) {
@@ -108,6 +158,11 @@ class Category
         return $this;
     }
 
+    /**
+     * Строковое представление.
+     *
+     * @return string|null
+     */
     public function __toString()
     {
         return $this->getTitle();
